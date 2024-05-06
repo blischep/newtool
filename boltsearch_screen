@@ -1,0 +1,323 @@
+import os
+import tkinter as tk
+from tkinter import ttk
+from tkinter import *
+import customtkinter as ctk 
+from PIL import Image
+import setup_widget
+import main_screen
+import bolt2spec_screen
+
+class FindBolt():
+    
+    def show_boltsearch_frame(self):
+
+        self.frame_main_navigation.pack_forget()
+                     
+        if self.frame_boltsearch:
+            self.frame_boltsearch.destroy()  # Destroy the previous frame if it exists
+
+        self.frame_boltsearch = ctk.CTkFrame(self.frame_main,
+                                                fg_color=self.color_bg_2)
+
+        self.tabview_boltsearch = ctk.CTkTabview(self.frame_boltsearch,
+                                                    corner_radius=5,
+                                                    segmented_button_selected_color=self.color_button,
+                                                    )
+        self.tabview_boltsearch.pack(pady=(10,0), fill=BOTH, expand=YES) 
+
+        self.tabview_boltsearch.add("Civata Ara",)
+        self.tabview_boltsearch.add("Civata Özelliği Bul")
+        self.tabview_boltsearch.add("Lug Bolt-Washer-Nut Bul")
+
+        self.frame_boltsearch.pack(side="left", fill="both", expand=True)   # Fill both vertically and horizontally
+        self.frame_boltsearch.columnconfigure(2,weight=1)
+        self.frame_boltsearch.rowconfigure(1,weight=1)
+        
+        FindBolt.tabview_Civata_Ara(self)
+        bolt2spec_screen.FindSpec.tabview_Civata_Ozelligi_Bul(self)
+    
+    def tabview_Civata_Ara(self):
+       
+        self.frame_input_boltsearch = ctk.CTkFrame(
+            self.tabview_boltsearch.tab("Civata Ara"),
+            fg_color=self.color_frame_1,
+            corner_radius=5,
+            
+        )
+        self.frame_input_boltsearch.pack(fill="y", side="left", expand=False, padx=10, pady=10)
+
+        self.frame_result_boltsearch = None
+        
+    
+        # Input widgets
+        # Diameter Entry
+        self.frame_boltsearch_input_1 = ctk.CTkFrame(
+            self.frame_input_boltsearch,
+            fg_color=self.color_bg_2, 
+            corner_radius=5,
+            border_width=2
+        )
+        self.frame_boltsearch_input_1.pack(fill="y", side="top", expand=True, padx=10,pady=10)
+
+        self.label_diameter = ctk.CTkLabel(
+            self.frame_boltsearch_input_1,
+            text="Civata Çapı",
+            anchor="w",
+            text_color=self.color_text,
+            font=self.font_config_body
+        )
+
+        self.entry_boltdiameter = ctk.CTkEntry(
+            self.frame_boltsearch_input_1,
+            placeholder_text="Çap değerini giriniz.",
+            font=self.font_config_light,
+            placeholder_text_color="#7b7c7f",
+            width=175,
+            height=30,
+            corner_radius=2,
+            border_width=0.2,
+            fg_color=self.color_frame_1,
+            justify="center"
+        )
+
+        self.label_diameter.pack(side="top", anchor="w", padx=15, pady=(10, 0))  
+        self.entry_boltdiameter.pack(side="top", anchor="w", padx=15, pady=(0, 10))  
+
+        self.frame_boltsearch_input_sub1 = ctk.CTkFrame(self.frame_boltsearch_input_1, fg_color=self.color_bg_2, corner_radius=5)
+        self.frame_boltsearch_input_sub1.pack(fill="y", side="top",padx=3, expand=True)  
+
+        self.frame_boltsearch_input_2 = ctk.CTkFrame(self.frame_boltsearch_input_sub1, fg_color=self.color_bg_2, corner_radius=5)
+        self.frame_boltsearch_input_2.pack(fill="y", side="left",padx=3, expand=True)  
+
+        self.label_length = ctk.CTkLabel(
+            self.frame_boltsearch_input_2,
+            text="Civata Boyu",
+            anchor="w",
+            text_color=self.color_text,
+            font=self.font_config_body
+        )
+
+        self.entry_boltlength = ctk.CTkEntry(
+            self.frame_boltsearch_input_2,
+            placeholder_text="Boy değerini giriniz.",
+            font=self.font_config_light,
+            placeholder_text_color="#7b7c7f",
+            width=175,
+            height=30,
+            corner_radius=2,
+            border_width=0.2,
+            fg_color=self.color_frame_1,
+            justify="center"
+        )
+        self.frame_boltsearch_input_3 = ctk.CTkFrame(self.frame_boltsearch_input_sub1, fg_color=self.color_bg_2, corner_radius=5)
+        self.frame_boltsearch_input_3.pack(side="left", fill="y", expand=True)  
+
+        self.label_lengthtype = ctk.CTkLabel(
+            self.frame_boltsearch_input_3,
+            text="Boy Şekli",
+            anchor="w",
+            text_color=self.color_text,
+            font=self.font_config_body
+        )
+        combobox_boltlength_values = {
+            "Grip Length": "Thread'sız shank boyu",
+            "Total Length": "Shank'ın tüm boyu"
+        }
+
+        self.combobox_boltlength = ctk.CTkComboBox(
+            self.frame_boltsearch_input_3,
+            values=list(combobox_boltlength_values.keys()),
+            font=self.font_config_light,
+            dropdown_font=self.font_config_light,
+            width=175,
+            height=30,
+            corner_radius=2,
+            border_width=0.2,
+            fg_color=self.color_frame_1,
+            justify="center"
+        )
+        self.combobox_boltlength.set("Grip Length")
+
+        #tooltip_lengthtype = Tooltip(self.combobox_boltlength, combobox_boltlength_values)  # Pass dictionary directly
+
+        self.label_length.pack(side="top", anchor="w", padx=10, pady=(10, 0))  
+        self.entry_boltlength.pack(side="top", anchor="w", padx=10, pady=(0, 10))  
+        self.label_lengthtype.pack(side="top", anchor="w", padx=10, pady=(10, 0))  
+        self.combobox_boltlength.pack(side="top", anchor="w", padx=10, pady=(0, 10))  
+
+        self.frame_boltsearch_input_sub2 = ctk.CTkFrame(self.frame_boltsearch_input_1, fg_color=self.color_bg_2, corner_radius=5)
+        self.frame_boltsearch_input_sub2.pack(fill="y", side="top",padx=3, expand=True)  
+
+        self.frame_boltsearch_input_4 = ctk.CTkFrame(self.frame_boltsearch_input_sub2, fg_color=self.color_bg_2, corner_radius=5)
+        self.frame_boltsearch_input_4.pack(side="left", fill="y", expand=True)  
+
+        self.frame_boltsearch_input_5 = ctk.CTkFrame(self.frame_boltsearch_input_sub2, fg_color=self.color_bg_2, corner_radius=5)
+        self.frame_boltsearch_input_5.pack(side="left", fill="y", expand=True)  
+
+        self.label_material = ctk.CTkLabel(
+            self.frame_boltsearch_input_4,
+            text="Malzeme",
+            anchor="w",
+            text_color=self.color_text,
+            font=self.font_config_body
+        )
+
+        self.combobox_material = ctk.CTkComboBox(
+            self.frame_boltsearch_input_4,
+            values=["Tüm Malzemeler", "Alloy Steel", "CRES", "Titanium Alloy", "Aluminum Alloy"],
+            font=self.font_config_light,
+            dropdown_font=self.font_config_light,
+            width=175,
+            height=30,
+            corner_radius=2,
+            border_width=0.2,
+            fg_color=self.color_frame_1,
+            justify="center"
+        )
+        self.combobox_material.set("Tüm Malzemeler")
+
+        self.label_surfacecoating = ctk.CTkLabel(
+            self.frame_boltsearch_input_5,
+            text="Yüzey İşlemi",
+            anchor="w",
+            text_color=self.color_text,
+            font=self.font_config_body
+        )
+
+        self.combobox_surfacecoating = ctk.CTkComboBox(
+            self.frame_boltsearch_input_5,
+            values=["Tüm Kaplamalar", "Cadmium", "Aluminium", "Chromium", "No Coating"],
+            font=self.font_config_light,
+            dropdown_font=self.font_config_light,
+            width=175,
+            height=30,
+            corner_radius=2,
+            border_width=0.2,
+            fg_color=self.color_frame_1,
+            justify="center"
+        )   
+        self.combobox_surfacecoating.set("Tüm Kaplamalar")
+
+        self.label_material.pack(side="top", anchor="w", padx=10, pady=(10, 0))  
+        self.combobox_material.pack(side="top", anchor="w", padx=10, pady=(0, 10))   
+        self.label_surfacecoating.pack(side="top", anchor="w", padx=10, pady=(10, 0))  
+        self.combobox_surfacecoating.pack(side="top", anchor="w", padx=10, pady=(0, 10))  
+
+        
+        self.frame_boltsearch_input_sub3 = ctk.CTkFrame(self.frame_boltsearch_input_1, fg_color=self.color_bg_2, corner_radius=5)
+        self.frame_boltsearch_input_sub3.pack(fill="y", side="top",padx=3,pady=3, expand=True)  
+        self.checkbox_drillhead = ctk.CTkCheckBox(self.frame_boltsearch_input_sub3,
+                                                text="Drilled Head",
+                                                text_color=self.color_text,
+                                                font=self.font_config_header,
+                                                border_color=self.color_text,
+                                                hover_color="#2A303C",
+                                                fg_color=self.color_button,
+                                                corner_radius=15,
+                                                width=120,
+                                                height=40,
+                                                border_width=1)
+        self.checkbox_drillshank = ctk.CTkCheckBox(self.frame_boltsearch_input_sub3,
+                                                text="Drilled Shank",
+                                                text_color=self.color_text,
+                                                font=self.font_config_header,
+                                                border_color=self.color_text,
+                                                hover_color="#2A303C",
+                                                fg_color=self.color_button,
+                                                corner_radius=15,
+                                                width=120,
+                                                height=40,
+                                                border_width=1)
+        self.checkbox_drillhead.pack(side="left", anchor="w",padx=(0,10), pady=0)
+        self.checkbox_drillshank.pack(side="left", anchor="w",padx=(10,0), pady=0) 
+        
+        
+        self.frame_boltsearch_input_sub4 = ctk.CTkFrame(self.frame_boltsearch_input_1, fg_color=self.color_bg_2, corner_radius=5)
+        self.frame_boltsearch_input_sub4.pack(fill="x",side="top",padx=3,pady=3, expand=True)  
+              
+        self.button_boltsearch_reset=ctk.CTkButton( self.frame_boltsearch_input_sub4,
+                                    text="Sıfırla",
+                                    text_color="white",
+                                    fg_color="black",
+                                    font=self.font_config_header,
+                                    hover_color=self.color_hover_1,
+                                    border_spacing=10,
+                                    #command=none,
+                                    height=50,
+                                    #image=self.ico_logout
+                                    )
+        self.button_boltsearch_reset.pack(expand=True,side="left",padx=15, pady=15) 
+
+        self.button_boltsearch_search=ctk.CTkButton( self.frame_boltsearch_input_sub4,
+                                    text="Civata Ara",
+                                    text_color="white",
+                                    fg_color=self.color_button,
+                                    font=self.font_config_header,
+                                    hover_color=self.color_hover_1,
+                                    border_spacing=10,
+                                    #command=none,
+                                    height=50,
+                                    #image=self.ico_logout
+                                    )
+        self.button_boltsearch_search.pack(expand=True,side= "left",padx=15, pady=15) 
+        
+        
+        self.button_moduleclose = ctk.CTkButton( self.frame_input_boltsearch,
+                                    text="Modülü Kapat",
+                                    text_color=self.color_text,
+                                    font=self.font_config_header,
+                                    fg_color=self.color_bg_1,
+                                    hover_color=self.color_hover_1,
+                                #   border_spacing=10,
+                                    command=lambda:FindBolt.close_frame_boltsearch(self),
+                                    width=85,
+                                    image=self.ico_logout
+                                    )
+        self.button_moduleclose.pack( fill="y", expand=True, pady=(0,15)) 
+
+        self.frame_result_boltsearch = ctk.CTkFrame(
+            self.tabview_boltsearch.tab("Civata Ara"),
+            fg_color=self.color_frame_1,
+            corner_radius=5,
+            border_width=2
+
+        )
+        self.frame_result_boltsearch.pack(fill="both", side="left", expand=True, padx=10, pady=10)
+
+        # Result Treeview
+        self.treeview_result_boltsearch = ttk.Treeview(self.frame_result_boltsearch)
+        self.treeview_result_boltsearch['columns'] = ('Column1', 'Column2')
+
+        self.treeview_result_boltsearch.heading('#0', text='Item', anchor="center")
+        self.treeview_result_boltsearch.heading('Column1', text='Civata Adı', anchor="center")
+        self.treeview_result_boltsearch.heading('Column2', text='Grip Boyu', anchor="center")
+
+        self.treeview_result_boltsearch.column("#0", anchor="center")
+        self.treeview_result_boltsearch.column("Column1", anchor="center")
+        self.treeview_result_boltsearch.column("Column2", anchor="center")
+
+        for i in range(1, 21):
+            item_name = f'Item {i}'
+            civata_adi = f'Civata Adı {i}'
+            grip_boyu = f'Grip Boyu {i}'
+
+            self.treeview_result_boltsearch.insert('', 'end', text=item_name + "x", values=(civata_adi, grip_boyu))
+
+        scrollbary = ttk.Scrollbar(self.frame_result_boltsearch, orient='vertical', command=self.treeview_result_boltsearch.yview) 
+        scrollbarx = ttk.Scrollbar(self.frame_result_boltsearch, orient='horizontal', command=self.treeview_result_boltsearch.xview) 
+        scrollbary.pack(side='right', fill='y', padx=2, pady=2)
+        scrollbarx.pack(side='bottom', fill='x', padx=2, pady=2)
+
+        self.treeview_result_boltsearch.configure(yscrollcommand=scrollbary.set, xscrollcommand=scrollbarx.set)
+
+        self.treeview_result_boltsearch.pack(fill="both", expand=True, padx=15, pady=2)
+
+
+
+
+    def close_frame_boltsearch(self):
+        if self.frame_boltsearch:
+            self.frame_boltsearch.pack_forget()
+            self.frame_main_navigation.pack(side="left", fill="both", expand=True)
+
