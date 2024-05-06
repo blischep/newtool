@@ -1,0 +1,81 @@
+import os
+import tkinter as tk
+from tkinter import ttk
+from tkinter import *
+import customtkinter as ctk 
+from PIL import Image
+import setup_widget
+import main
+import boltsearch_screen
+import detailcoating_screen
+
+def setup_mainscreen(self): #Ana ekran düzenlemesi
+
+    self.frame_main = ctk.CTkFrame(self,
+                                    width=400,
+                                    height=200,
+                                    )
+    self.frame_main.pack(fill="both", expand=True) 
+
+    self.frame_main_navigation = ctk.CTkFrame(self.frame_main,
+                                                fg_color=self.color_bg_1)
+    self.frame_main_navigation.pack(side="top", fill="both", expand=True) 
+
+    self.frame_boltsearch = None
+    self.frame_bolt_rvrs_srch = None
+    self.frame_srfc_coating = None
+    self.frame_coatingsearch = None
+
+    self.logo_tai = ctk.CTkLabel(self.frame_main_navigation,
+                                    text="\n\n\n\n\n\n\n Rotor Tasarım \nMüdürlüğü",
+                                    text_color=self.color_text,
+                                    font=ctk.CTkFont(family="Inter Display",
+                                                    size=28,
+                                                    weight="bold"),
+                                    image=self.img_logo_tai)
+    self.logo_tai.pack(side="top", fill="x", expand=False) 
+
+    self.label_toolName = ctk.CTkLabel(self.frame_main_navigation,
+                                        width=370, text="Tasarım Yardımcı Aracı",
+                                        text_color=self.color_text,
+                                        font=ctk.CTkFont(family="Neue Haas Grotesk Display Pro",
+                                                        size=22,
+                                                        weight="bold"))
+    self.label_toolName.pack(side="top", fill="x", expand=False) 
+
+    self.button_BoltSearch = ctk.CTkButton(self.frame_main_navigation,
+                                            text="Civata Yardımcısı",
+                                            text_color=self.color_text,
+                                            font=ctk.CTkFont(family="Neue Haas Grotesk Display Pro", size=30, weight="bold"),
+                                            fg_color="transparent",
+                                            hover_color=self.color_hover_1,
+                                            border_spacing=20,
+                                            command = lambda:boltsearch_screen.FindBolt.show_boltsearch_frame(self)
+                                            )
+    self.button_BoltSearch.pack(side="top", fill="both", expand=True) 
+
+    self.button_SurfaceSearch = ctk.CTkButton(self.frame_main_navigation,
+                                                text="Kaplama Yardımcısı",
+                                                text_color=self.color_text,
+                                                font=ctk.CTkFont(family="Inter Display", size=30, weight="bold"),
+                                                fg_color=self.color_bg_1,
+                                                hover_color=self.color_hover_1,
+                                                border_spacing=20,
+                                                command=lambda:detailcoating_screen.DetailSurface.show_coatingsearch_frame(self)
+                                                )
+
+    self.button_SurfaceSearch.pack(side="top", fill="both", expand=True) 
+
+    self.button_Kapat = ctk.CTkButton(self.frame_main_navigation,
+                                        text="Programı Kapat",
+                                        text_color=self.color_text,
+                                        font=ctk.CTkFont(family="Inter Display", size=26, weight="bold"),
+                                        fg_color=self.color_bg_1,
+                                        hover_color=self.color_hover_1,
+                                        border_spacing=20,
+                                        #command=boltsearch_1_screen.FindBolt.close_frame_boltsearch(self)
+                                        )
+
+    self.button_Kapat.pack(side="top", fill="both", expand=True)
+    
+
