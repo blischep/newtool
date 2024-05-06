@@ -1,0 +1,60 @@
+import os
+import tkinter as tk
+from tkinter import ttk
+from tkinter import *
+import customtkinter as ctk # type: ignore
+from PIL import Image
+
+def setup_images(self):
+    image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "images")
+    self.img_logo_tai = ctk.CTkImage(Image.open(os.path.join(image_path, "logo_tai.png")), size=(100, 136))
+    # self.ico_baolt = ctk.CTkImage(Image.open(os.path.join(image_path, "bolt.png")), size=(224/1.5 , 376/1.5))
+    self.ico_logout = ctk.CTkImage(Image.open(os.path.join(image_path, "logout.png")), size=(50,50))
+
+def setup_stylewidgets(self):
+    self.color_bg_1 = "#212121"
+    self.color_bg_2 = "#2C2C2C"
+    self.color_frame_1 = "#212121"
+    self.color_frame_2 = "#161616"
+    self.color_text = "#E0E0E0"
+    self.color_button = "#23C55E"
+    self.color_hover_1 = "#2C2C2C"
+
+    self.font_config_header = ("Nunito SemiBold", 18, "bold")
+    self.font_config_treeview = ("Nunito Regular", 11, "normal")
+    self.font_config_treeviewheading = ("Nunito Black", 14, "normal")
+    self.font_config_body = ("Nunito Bold", 18, "bold")
+    self.font_config_light = ("Nunito REgular", 14, "normal")
+        
+    treestyle = ttk.Style()
+    treestyle.theme_use('default')
+    treestyle.configure("Treeview",
+                                    background=self.color_frame_1,
+                                    foreground="white",
+                                    rowheight=40,
+                                    fieldbackground=self.color_frame_1,
+                                    font=self.font_config_treeview,
+                                    borderwidth=0)
+    treestyle.map('Treeview', background=[('selected', self.color_bg_2)],
+                        foreground=[('selected', "white")])
+    self.bind("<<TreeviewSelect>>", lambda event: self.focus_set())
+
+    treestyle.configure("Treeview.Heading", # type: ignore
+                        background=self.color_frame_1,
+                        foreground="white",
+                        relief="flat",
+                        font=self.font_config_treeviewheading
+                        )
+
+    treestyle.map("Treeview.Heading", # type: ignore
+                        background=[('active', '#3484F0')])
+
+    treestyle.configure("TScrollbar", # type: ignore
+            background=self.color_button,
+            troughcolor=self.color_hover_1,
+            arrowcolor=self.color_text,
+            arrowsize=20,
+            bordercolor=self.color_text,
+            borderwidth=0,
+            relief="flat")
+        
