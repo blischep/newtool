@@ -2,264 +2,70 @@ import os
 import tkinter as tk
 from tkinter import ttk
 from tkinter import *
-import customtkinter as ctk
+import customtkinter as ctk 
 from PIL import Image
 import setup_widget
 import main_screen
-import boltsearch_screen
 
-class FindSpec:
-    def tabview_Civata_Ozelligi_Bul(self):
-        # Input Frame
-        self.frame_input_boltinfo = ctk.CTkFrame(
-            self.tabview_boltsearch.tab("Civata Özelliği Bul"),
-            fg_color=self.color_frame_1,
-            corner_radius=10
-        )
-        self.frame_input_boltinfo.pack(fill="both", expand=True, side="top", padx=15, pady=15)
+ctk.set_appearance_mode("dark")  # Modes: system (default), light, dark
+ctk.set_default_color_theme("green")  # Themes: blue (default), dark-blue, green
+class HelperTool(ctk.CTk):
+    def __init__(self):
+        super().__init__() 
+        self.title("Bolt Search App")
 
-        # Inputların bağlı olduğu frame'i tutan frame
-        self.frame_input_boltinfo_1 = ctk.CTkFrame(
-            self.frame_input_boltinfo,
-            fg_color=self.color_frame_1,
-            corner_radius=10
-        )
-        self.frame_input_boltinfo_1.pack(fill="x", side="top", expand=True, padx=15, pady=15)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
+        self.configure(fg_color="#23262B") 
+        setup_widget.setup_stylewidgets(self)
+        setup_widget.setup_images(self)
+        main_screen.setup_mainscreen(self)
 
-        # Result Frame
-        self.frame_result_boltinfo = ctk.CTkFrame(
-            self.frame_input_boltinfo,
-            fg_color=self.color_frame_1,
-            corner_radius=10
-        )
-        self.frame_result_boltinfo.pack(fill="both", side="bottom", expand=True, padx=15, pady=15)
 
-        # Standart combobox
-        self.frame_bolt_to_spec_1 = ctk.CTkFrame(
-            self.frame_input_boltinfo_1,
-            fg_color=self.color_bg_2,
-            corner_radius=5,
-        )
-        self.frame_bolt_to_spec_1.pack(fill="y", side="left", expand=True, padx=10, pady=10)
 
-        self.label_standart_1 = ctk.CTkLabel(
-            self.frame_bolt_to_spec_1,
-            text="Standart",
-            anchor="w",
-            text_color=self.color_text,
-            font=self.font_config_body
-        )
-        self.label_standart_1.pack(side="top", anchor="w", padx=10, pady=(10, 0))
 
-        self.combobox_standart_1 = ctk.CTkComboBox(
-            self.frame_bolt_to_spec_1,
-            values=["NAS", "MS"],
-            font=self.font_config_light,
-            dropdown_font=self.font_config_light,
-            width=150,
-            height=30,
-            corner_radius=2,
-            border_width=0.2,
-            fg_color=self.color_frame_1,
-            justify="center"
-        )
-        self.combobox_standart_1.set("NAS")
-        self.combobox_standart_1.pack(side="top", anchor="w", padx=10, pady=(0, 10))
 
-        # Çap dash no giriniz(varsa)
-        self.frame_bolt_to_spec_2 = ctk.CTkFrame(
-            self.frame_input_boltinfo_1,
-            fg_color=self.color_bg_2,
-            corner_radius=5,
-        )
-        self.frame_bolt_to_spec_2.pack(fill="y", side="left", expand=True, padx=10, pady=10)
 
-        self.label_standart_2 = ctk.CTkLabel(
-            self.frame_bolt_to_spec_2,
-            text="Çap dash no giriniz(varsa)",
-            anchor="w",
-            text_color=self.color_text,
-            font=self.font_config_body
-        )
-        self.label_standart_2.pack(side="top", anchor="w", padx=10, pady=(10, 0))
 
-        self.entry_standart = ctk.CTkEntry(
-            self.frame_bolt_to_spec_2,
-            placeholder_text="###",
-            font=self.font_config_light,
-            placeholder_text_color="#7b7c7f",
-            width=150,
-            height=30,
-            corner_radius=2,
-            border_width=0.2,
-            fg_color=self.color_frame_1,
-            justify="center"
-        )
-        self.entry_standart.pack(side="top", anchor="center", padx=10, pady=(0, 10))
 
-        # NAS ve MS'ten sonraki-den önceki kısmı yazınız
-        self.frame_bolt_to_spec_3 = ctk.CTkFrame(
-            self.frame_input_boltinfo_1,
-            fg_color=self.color_bg_2,
-            corner_radius=5,
-        )
-        self.frame_bolt_to_spec_3.pack(fill="y", side="left", expand=True, padx=10, pady=10)
+#class Tooltip:
+#    def __init__(self, widget, text_dict):
+#        self.widget = widget
+#        self.text_dict = text_dict  # Use a dictionary for tooltip text
 
-        self.label_standart_3 = ctk.CTkLabel(
-            self.frame_bolt_to_spec_3,
-            text="NAS ve MS'ten sonraki-den\nönceki kısmı yazınız",
-            anchor="w",
-            text_color=self.color_text,
-            font=self.font_config_body
-        )
-        self.label_standart_3.pack(side="top", anchor="w", padx=10, pady=(10, 0))
+#        self.tip = None  # Initialize tip window lazily
 
-        self.entry_standart = ctk.CTkEntry(
-            self.frame_bolt_to_spec_3,
-            placeholder_text="6704",
-            font=self.font_config_light,
-            placeholder_text_color="#7b7c7f",
-            width=150,
-            height=30,
-            corner_radius=2,
-            border_width=0.2,
-            fg_color=self.color_frame_1,
-            justify="center"
-        )
-        self.entry_standart.pack(side="top", anchor="center", padx=10, pady=(0, 10))
+#        self.widget.bind("<Enter>", self.enter)
+#        self.widget.bind("<Leave>", self.leave)
 
-        # Harfleri seçiniz
-        self.frame_bolt_to_spec_4 = ctk.CTkFrame(
-            self.frame_input_boltinfo_1,
-            fg_color=self.color_bg_2,
-            corner_radius=5,
-        )
-        self.frame_bolt_to_spec_4.pack(fill="y", side="left", expand=True, padx=10, pady=10)
+#    def enter(self, event):
+#        if not self.tip:
+#            self.create_tip()
+#        self.show_tip()
 
-        self.label_standart_4 = ctk.CTkLabel(
-            self.frame_bolt_to_spec_4,
-            text="Harfleri seçiniz",
-            anchor="w",
-            text_color=self.color_text,
-            font=self.font_config_body
-        )
-        self.label_standart_4.pack(side="top", anchor="w", padx=10, pady=(10, 0))
+#    def leave(self, event):
+#        if self.tip:
+#            self.tip.withdraw()
 
-        self.combobox_standart_2 = ctk.CTkComboBox(
-            self.frame_bolt_to_spec_4,
-            values=["D", "H", "DH", ""],
-            font=self.font_config_light,
-            dropdown_font=self.font_config_light,
-            width=150,
-            height=30,
-            corner_radius=2,
-            border_width=0.2,
-            fg_color=self.color_frame_1,
-            justify="center"
-        )
-        self.combobox_standart_2.set("-")
-        self.combobox_standart_2.pack(side="top", anchor="w", padx=10, pady=(0, 10))
+#    def create_tip(self):
+#        x, y, _, _ = self.widget.bbox("insert")
+#        x += self.widget.winfo_rootx() + 25
+#        y += self.widget.winfo_rooty() + 30
+#        self.tip = tk.Toplevel(self.widget)
+#        self.tip.wm_withdraw()  # Hide the main window
+#        self.tip.wm_overrideredirect(True)  # Set window as transient
+#        self.tip.wm_geometry(f"+{x}+{y}")  # Set initial position
 
-        # Standart 5
-        self.frame_bolt_to_spec_5 = ctk.CTkFrame(
-            self.frame_input_boltinfo_1,
-            fg_color=self.color_bg_2,
-            corner_radius=5,
-        )
-        self.frame_bolt_to_spec_5.pack(fill="y", side="left", expand=True, padx=10, pady=10)
+#        self.label = ttk.Label(self.tip, text="", wraplength=200)  # Wrap text
+#        self.label.pack()
 
-        self.label_standart_5 = ctk.CTkLabel(
-            self.frame_bolt_to_spec_5,
-            text="Length dash no giriniz",
-            anchor="center",
-            text_color=self.color_text,
-            font=self.font_config_body
-        )
-        self.label_standart_5.pack(side="top", anchor="w", padx=10, pady=(10, 0))
+#    def show_tip(self):
+#        selected_value = self.widget.get()
+#        if selected_value in self.text_dict:
+#            self.tip.title(selected_value)
+#            self.label.config(text=self.text_dict[selected_value])
+#            self.tip.deiconify()  # Show the tooltip window
 
-        self.entry_standart_1 = ctk.CTkEntry(
-            self.frame_bolt_to_spec_5,
-            placeholder_text="###",
-            font=self.font_config_light,
-            placeholder_text_color="#7b7c7f",
-            width=150,
-            height=30,
-            corner_radius=2,
-            border_width=0.2,
-            fg_color=self.color_frame_1,
-            justify="center"
-        )
-        self.entry_standart_1.pack(side="top", anchor="w", padx=10, pady=(0, 10))
-
-        # Standart 6
-        self.frame_bolt_to_spec_6 = ctk.CTkFrame(
-            self.frame_input_boltinfo_1,
-            fg_color=self.color_bg_2,
-            corner_radius=5,
-        )
-        self.frame_bolt_to_spec_6.pack(fill="y", side="left", expand=True, padx=10, pady=10)
-
-        self.label_standart_6 = ctk.CTkLabel(
-            self.frame_bolt_to_spec_6,
-            text="Harfleri seçiniz",
-            anchor="w",
-            text_color=self.color_text,
-            font=self.font_config_body
-        )
-        self.label_standart_6.pack(side="top", anchor="w", padx=10, pady=(10, 0))
-
-        self.combobox_standart_3 = ctk.CTkComboBox(
-            self.frame_bolt_to_spec_6,
-            values=["D", "H", "DH", ""],
-            font=self.font_config_light,
-            dropdown_font=self.font_config_light,
-            width=150,
-            height=30,
-            corner_radius=2,
-            border_width=0.2,
-            fg_color=self.color_frame_1,
-            justify="center"
-        )
-        self.combobox_standart_3.set("-")
-        self.combobox_standart_3.pack(side="top", anchor="w", padx=10, pady=(0, 10))
-
-        # RESULT FRAME
-        self.frame_result_boltinfo_1 = ctk.CTkFrame(
-            self.frame_result_boltinfo,
-            fg_color=self.color_frame_1,
-            corner_radius=10
-        )
-        self.frame_result_boltinfo_1.pack(side="bottom", expand=True, padx=15, pady=15)
-
-        self.cap_var = tk.StringVar()
-        ctk.CTkLabel(self.frame_result_boltinfo_1, text="Çap: ", text_color=self.color_text, font=self.font_config_body).pack(side=tk.LEFT, padx=5, pady=5)
-        ctk.CTkLabel(self.frame_result_boltinfo_1, text="XXXX", textvariable=self.cap_var).pack(side=tk.LEFT, padx=10, pady=5)
-
-        self.total_length_var = tk.StringVar()
-        ctk.CTkLabel(self.frame_result_boltinfo_1, text="Toplam Boy: ", text_color=self.color_text, font=self.font_config_body).pack(side=tk.LEFT, padx=5, pady=5)
-        ctk.CTkLabel(self.frame_result_boltinfo_1, text="XXXX", textvariable=self.total_length_var).pack(side=tk.LEFT, padx=10, pady=5)
-
-        self.grip_length_var = tk.StringVar()
-        ctk.CTkLabel(self.frame_result_boltinfo_1, text="Grip Boyu: ", text_color=self.color_text, font=self.font_config_body).pack(side=tk.LEFT, padx=5, pady=5)
-        ctk.CTkLabel(self.frame_result_boltinfo_1, text="XXXX", textvariable=self.grip_length_var).pack(side=tk.LEFT, padx=10, pady=5)
-
-        self.material_var = tk.StringVar()
-        ctk.CTkLabel(self.frame_result_boltinfo_1, text="Malzeme: ", text_color=self.color_text, font=self.font_config_body).pack(side=tk.LEFT, padx=5, pady=5)
-        ctk.CTkLabel(self.frame_result_boltinfo_1, text="XXXX", textvariable=self.material_var).pack(side=tk.LEFT, padx=10, pady=5)
-
-        self.coating_var = tk.StringVar()
-        ctk.CTkLabel(self.frame_result_boltinfo_1, text="Kaplama Özellikleri: ", text_color=self.color_text, font=self.font_config_body).pack(side=tk.LEFT, padx=5, pady=5)
-        ctk.CTkLabel(self.frame_result_boltinfo_1, text="XXXX", textvariable=self.cap_var).pack(side=tk.LEFT, padx=10, pady=5)
-
-        self.button_moduleclose = ctk.CTkButton(
-            self.tabview_boltsearch.tab("Civata Özelliği Bul"),
-            text="Modülü Kapat",
-            text_color=self.color_text,
-            font=self.font_config_header,
-            fg_color=self.color_bg_1,
-            hover_color=self.color_hover_1,
-            command=lambda: boltsearch_screen.FindBolt.close_frame_boltsearch(self),
-            width=85,
-            image=self.ico_logout
-        )
-        self.button_moduleclose.pack(fill="y", expand=True, pady=(0, 15))
+if __name__ == "__main__":
+    app = HelperTool()
+    app.mainloop() 
