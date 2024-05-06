@@ -1,0 +1,159 @@
+import os
+import tkinter as tk
+from tkinter import ttk
+from tkinter import *
+import customtkinter as ctk 
+from PIL import Image
+import setup_widget
+import main_screen
+
+class DetailSurface():
+
+    def show_coatingsearch_frame(self):
+
+        self.frame_main_navigation.pack_forget()
+
+        self.frame_main_navigation_mini = ctk.CTkFrame(self.frame_main,
+                                                       fg_color=self.color_bg_1,
+                                                       corner_radius=5
+                                                       )       
+
+        self.button_moduleclose = ctk.CTkButton(self.frame_main_navigation_mini,
+                                  text="",
+                                  text_color=self.color_bg_1,
+                                  font=self.font_config_body,
+                                  fg_color=self.color_bg_1,
+                                  hover_color=self.color_hover_1,
+                                #   border_spacing=10,
+                                  command=lambda: DetailSurface.close_frame_coatingsearch(self),
+                                  width=85,
+                                  image=self.ico_logout
+                                  )
+        self.button_moduleclose.pack( fill="y", expand=True) 
+      
+        if self.frame_coatingsearch:
+            self.frame_coatingsearch.destroy()  # Destroy the previous frame if it exists
+
+        self.frame_coatingsearch = ctk.CTkFrame(self.frame_main,
+                                             fg_color=self.color_bg_2)
+
+        self.tabview_coatingsearch = ctk.CTkTabview(self.frame_coatingsearch,
+                                                    corner_radius=5,
+                                                    segmented_button_selected_color=self.color_button,
+                                                    )
+        self.tabview_coatingsearch.pack(pady=(10,0), fill=BOTH, expand=YES) 
+
+        self.tabview_coatingsearch.add("Detay Parça için")
+        self.tabview_coatingsearch.add("Montaj Parçaları için")
+
+        self.frame_main_navigation_mini.pack(side="left", fill="y") 
+        self.frame_coatingsearch.pack(side="left", fill="both", expand=True)   # Fill both vertically and horizontally
+
+        DetailSurface.tabview_coating_detailpart(self)
+
+    def tabview_coating_detailpart(self):
+
+        self.frame_input_detailsurfacesearch = ctk.CTkFrame(self.tabview_coatingsearch.tab("Detay Parça için"),
+                                                fg_color=self.color_frame_1,
+                                                corner_radius=5)
+        self.frame_input_detailsurfacesearch.pack(fill="x", side="left", expand=False, padx=10, pady=5) 
+
+        self.frame_result_detailsurfacesearch = ctk.CTkFrame(self.tabview_coatingsearch.tab("Detay Parça için"),
+                                                    fg_color=self.color_frame_1,
+                                                    corner_radius=5)
+        self.frame_result_detailsurfacesearch.pack(fill="both", expand=True, padx=10, pady=10) 
+
+
+        self.frame_detailsurfacesearch_input_1 = ctk.CTkFrame(
+                                        self.frame_input_detailsurfacesearch,
+                                        fg_color=self.color_bg_2, 
+                                        corner_radius=5,
+                                        )
+        self.frame_detailsurfacesearch_input_1.pack(fill="y", expand=True, padx=10, pady=10)  
+        
+        
+        self.label_detail_material = ctk.CTkLabel(self.frame_detailsurfacesearch_input_1,
+                                        text="Malzeme",
+                                        anchor="w",
+                                        text_color=self.color_text,
+                                        font=self.font_config_body)
+
+        self.combobox_detail_material = ctk.CTkComboBox(self.frame_detailsurfacesearch_input_1,
+                                                    values=["Tüm Malzemeler", "Alloy Steel", "CRES", "Titanium Alloy", "Aluminum Alloy"],
+                                                    font=self.font_config_light,
+                                                    dropdown_font=self.font_config_light,
+                                                    width=160,
+                                                    height=30,
+                                                    corner_radius=2,
+                                                    border_width=0.2,
+                                                    fg_color=self.color_frame_1,
+                                                    justify="center"
+                                                    )
+        self.combobox_detail_material.set("Tüm Malzemeler")
+        
+        self.label_detail_material.pack(side="top", anchor="w",padx=10, pady=(10,0)) 
+        self.combobox_detail_material.pack(side="top", anchor="w",padx=10, pady=(0,10))  
+
+        #----------------------------------------------------
+
+        self.frame_detailsurfacesearch_input_2 = ctk.CTkFrame(
+                                        self.frame_input_detailsurfacesearch,
+                                        fg_color=self.color_bg_2, 
+                                        corner_radius=5,
+                                        )
+        self.frame_detailsurfacesearch_input_2.pack(fill="y", expand=True, padx=10, pady=10)  
+        
+        
+        self.label_detail_category = ctk.CTkLabel(self.frame_detailsurfacesearch_input_2,
+                                        text="Kategori",
+                                        anchor="w",
+                                        text_color=self.color_text,
+                                        font=self.font_config_body)
+
+        self.combobox_detail_category = ctk.CTkComboBox(self.frame_detailsurfacesearch_input_2,
+                                                    values=["Tüm Kategoriler", "Category A", "Category B", "Category C"],
+                                                    font=self.font_config_light,
+                                                    dropdown_font=self.font_config_light,
+                                                    width=160,
+                                                    height=30,
+                                                    corner_radius=2,
+                                                    border_width=0.2,
+                                                    fg_color=self.color_frame_1,
+                                                    justify="center"
+                                                    )
+        self.combobox_detail_category.set("Tüm Kategoriler")
+        
+        self.label_detail_category.pack(side="top", anchor="w",padx=10, pady=(10,0)) 
+        self.combobox_detail_category.pack(side="top", anchor="w",padx=10, pady=(0,10))  
+
+        #--------------------------------------------------------
+        
+        self.frame_detailsurfacesearch_input_3 = ctk.CTkFrame(   #other filtreler
+                                        self.frame_input_detailsurfacesearch,
+                                        fg_color=self.color_bg_2, 
+                                        corner_radius=5,
+                                        )
+        self.frame_detailsurfacesearch_input_3.pack(fill="y", expand=True, padx=10, pady=10)  
+
+        self.label_detail_other = ctk.CTkLabel(self.frame_detailsurfacesearch_input_3,
+                                        text="Diğer Filtereler",
+                                        anchor="w",
+                                        text_color=self.color_text,
+                                        font=self.font_config_body)
+        self.label_detail_other.pack(side="top", anchor="w",padx=10, pady=(10,0)) 
+
+
+        self.selectbox_detail_1 = ctk.CTkCheckBox(self.frame_detailsurfacesearch_input_3,
+                                                    text="Durable",
+                                                    text_color=self.color_text,
+                                                    font=self.font_config_header
+                                                    )
+        self.selectbox_detail_1.pack(side="top", anchor="w",padx=10, pady=(10,10)) 
+
+    
+
+    def close_frame_coatingsearch(self):
+        if self.frame_coatingsearch:
+            self.frame_coatingsearch.pack_forget()
+            self.frame_main_navigation_mini.pack_forget()  # Destroy the new frame when the "Programı Kapat" button is pressed
+            self.frame_main_navigation.pack(side="left", fill="both", expand=True)
