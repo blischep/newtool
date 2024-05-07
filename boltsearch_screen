@@ -155,6 +155,10 @@ class FindBolt():
         self.frame_boltsearch_input_5 = ctk.CTkFrame(self.frame_boltsearch_input_sub2, fg_color=self.color_bg_2, corner_radius=5)
         self.frame_boltsearch_input_5.pack(side="left", fill="y", expand=True)  
 
+        #----------------------------Material and Coating-----------------------------
+        self.material_combo_list = ["All Materials", "Alloy Steel", "CRES", "Nickel Alloy", "Titanium Alloy"]
+        self.coating_combo_list = ["All Coatings", "Aluminum", "Aluminum+CetylAlcohol", "Cadmium", "Cadmium+SolidFilmLube", "Chromium", "Passivated", "Passivated+SolidFilmLube","None"]
+
         self.label_material = ctk.CTkLabel(
             self.frame_boltsearch_input_4,
             text="Malzeme",
@@ -165,7 +169,7 @@ class FindBolt():
 
         self.combobox_material = ctk.CTkComboBox(
             self.frame_boltsearch_input_4,
-            values=["Tüm Malzemeler", "Alloy Steel", "CRES", "Titanium Alloy", "Aluminum Alloy"],
+            values=self.material_combo_list,
             font=self.font_config_light,
             dropdown_font=self.font_config_light,
             width=175,
@@ -175,6 +179,7 @@ class FindBolt():
             fg_color=self.color_frame_1,
             justify="center"
         )
+        self.combobox_material.bind("<<ComboboxSelected>>", lambda event: FindBolt.optimize_coating_wrt_material(self, event))  
         self.combobox_material.set("Tüm Malzemeler")
 
         self.label_surfacecoating = ctk.CTkLabel(
@@ -187,7 +192,7 @@ class FindBolt():
 
         self.combobox_surfacecoating = ctk.CTkComboBox(
             self.frame_boltsearch_input_5,
-            values=["Tüm Kaplamalar", "Cadmium", "Aluminium", "Chromium", "No Coating"],
+            values=self.coating_combo_list,
             font=self.font_config_light,
             dropdown_font=self.font_config_light,
             width=175,
@@ -196,7 +201,8 @@ class FindBolt():
             border_width=0.2,
             fg_color=self.color_frame_1,
             justify="center"
-        )   
+        )
+        self.combobox_surfacecoating.bind("<<ComboboxSelected>>", lambda event: FindBolt.optimize_material_wrt_coating(self, event))  
         self.combobox_surfacecoating.set("Tüm Kaplamalar")
 
         self.label_material.pack(side="top", anchor="w", padx=10, pady=(10, 0))  
@@ -277,10 +283,10 @@ class FindBolt():
         self.button_moduleclose.pack( fill="y", expand=True, pady=(0,15)) 
 
         self.frame_result_boltsearch = ctk.CTkFrame(
-            self.tabview_boltsearch.tab("Civata Ara"),
-            fg_color=self.color_frame_1,
-            corner_radius=5,
-            border_width=2
+                                    self.tabview_boltsearch.tab("Civata Ara"),
+                                    fg_color=self.color_frame_1,
+                                    corner_radius=5,
+                                    border_width=2
 
         )
         self.frame_result_boltsearch.pack(fill="both", side="left", expand=True, padx=10, pady=10)
@@ -312,7 +318,61 @@ class FindBolt():
         self.treeview_result_boltsearch.configure(yscrollcommand=scrollbary.set, xscrollcommand=scrollbarx.set)
 
         self.treeview_result_boltsearch.pack(fill="both", expand=True, padx=15, pady=2)
+        
+      
+      
+        
+    def optimize_coating_wrt_material(self, event):
+        # A mapping dictionary that associates materials with their compatible coatings
+        material_coating_mapping = {
+            "All Materials": ["All Coatings", "Aluminum", "Aluminum+CetylAlcohol", "Cadmium", "Cadmium+SolidFilmLube", "Chromium", "Passivated", "Passivated+SolidFilmLube", "None"],
+            "Alloy Steel": ["All Coatings", "Cadmium", "Chromium"],
+            "CRES": ["All Coatings", "Aluminum", "Aluminum+CetylAlcohol", "Cadmium", "Chromium", "Passivated"],
+            "Nickel Alloy": ["All Coatings", "Cadmium", "Passivated", "Passivated+SolidFilmLube"],
+            "Titanium Alloy": ["All Coatings", "Aluminum+CetylAlcohol", "None"]
+        }
 
+        # Get the selected coating and material from the combo boxes
+        selected_coating = self.combobox_surfacecoating.get()
+        selected_material = self.combobox_material.get()
+
+        # Update the values in the coating combo box based on the selected material
+        self.combobox_surfacecoating['values'] = material_coating_mapping.get(selected_material, [])
+
+        # Set the default coating to the first one in the updated list
+        self.combobox_surfacecoating.set(self.combobox_surfacecoating['values'][0] if self.combobox_surfacecoating['values'] else "")
+
+        # If the selected coating is not in the updated list, set the current index to 0 (default)
+        if selected_coating not in self.combobox_surfacecoating['values']:
+            self.combobox_surfacecoating.set(self.combobox_surfacecoating['values'][0] if self.combobox_surfacecoating['values'] else "")
+
+
+    def optimize_material_wrt_coating(self, event):
+        # A mapping dictionary that associates coatings with compatible materials
+        coating_material_mapping = {
+            "All Coatings": ["All Materials", "Alloy Steel", "CRES", "Nickel Alloy", "Titanium Alloy"],
+            "Aluminum": ["All Materials", "CRES"],
+            "Aluminum+CetylAlcohol": ["All Materials", "CRES", "Titanium Alloy"],
+            "Cadmium": ["All Materials", "Alloy Steel", "CRES", "Nickel Alloy"],
+            "Chromium": ["All Materials", "Alloy Steel", "CRES"],
+            "None": ["Titanium Alloy"],
+            "Passivated": ["All Materials", "CRES", "Nickel Alloy"],
+            "Passivated+SolidFilmLube": ["Nickel Alloy"]
+        }
+
+        # Get the selected coating and material from the combo boxes
+        selected_coating = self.combobox_surfacecoating.get()
+        selected_material = self.combobox_material.get()
+
+        # Update the list of compatible materials based on the selected coating
+        self.material_combo_list_updated = coating_material_mapping.get(selected_coating, [])
+
+        # Update the values in the material combo box with the compatible materials
+        self.combobox_material['values'] = self.material_combo_list_updated
+
+        # If the selected material is not in the updated list, set the current index to 0 (default)
+        if selected_material not in self.material_combo_list_updated:
+            self.combobox_material.current(0)
 
 
 
