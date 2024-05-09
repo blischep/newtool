@@ -1,0 +1,165 @@
+import tkinter as tk
+from tkinter import ttk
+
+# Ana pencereyi oluştur
+root = tk.Tk()
+root.title("Kişiselleştirilebilir Treeview")
+
+# Sütunları tanımla
+columns = ("Bolt Standart", "Dia", "Grip Length", "Total Length", "Material", "Finish and Lubricant", "Type", "Head Type", "Thread Length")
+
+# Gizli verileri saklamak için bir liste
+hidden_data = []
+
+# Gizleme/gösterme işlevselliği için bir sözlük (başlangıçta tüm sütunlar gösteriliyor)
+column_visibility = {column: True for column in columns}
+
+# Sütun indeksi eşlemesi için bir sözlük
+column_index_map = {col: i for i, col in enumerate(columns)}
+
+# Treeview oluşturma fonksiyonu
+def create_treeview(visibility):
+    global tree
+    tree = ttk.Treeview(root, show="headings", columns=[col for col in columns if visibility[col]])
+    tree.pack()
+
+    # Sütunları yapılandır
+    for column in columns:
+        if visibility[column]:
+            tree.column(column, width=100, anchor=tk.CENTER)
+            tree.heading(column, text=column)  # Sıralama işlevini menüye taşıyoruz
+
+    # Örnek veriler (verilerinizi buraya ekleyin)
+    data = [
+        ("M10x1.5", 10, 50, 60, "Stainless Steel", "Zinc Plated", "Hex Bolt", "Hex", 15),
+        ("M10x1.5", 10, 50, 60, "Stainless Steel", "Zinc Plated", "Hex Bolt", "Hex", 15),
+        ("M10x1.5", 10, 50, 60, "Stainless Steel", "Zinc Plated", "Hex Bolt", "Hex", 15),
+        ("M10x1.5", 10, 50, 60, "Stainless Steel", "Zinc Plated", "Hex Bolt", "Hex", 15),
+        ("M10x1.5", 10, 50, 60, "Stainless Steel", "Zinc Plated", "Hex Bolt", "Hex", 15),
+        ("M10x1.5", 12, 50, 60, "Stainless Steel", "Zinc Plated", "Hex Bolt", "Hex", 15),
+        ("M10x1.5", 16, 50, 60, "Stainless Steel", "Zinc Plated", "Hex Bolt", "Hex", 15),
+        ("M10x1.5", 10, 50, 60, "atainless Steel", "Zinc Plated", "Hex Bolt", "Hex", 15),
+        ("M10x1.5", 10, 50, 60, "Stainless Steel", "Zinc Plated", "Hex Bolt", "Hex", 15),
+
+        # ... diğer verilerinizi ekleyin ...
+    ]
+
+    # Verileri Treeview'e ekle (sadece görünür sütunlar)
+    for item in data:
+        tree.insert("", tk.END, values=[val for i, val in enumerate(item) if visibility[columns[i]]])
+
+    # Treeview'i otomatik olarak yeniden boyutlandır
+    tree.pack(expand=True, fill=tk.BOTH)
+
+# Sıralama fonksiyonu (güncellendi)
+def sort_column(tv, col, reverse):
+    # Görünür sütun indeksini al
+    col_index = column_index_map[col]
+
+    try:
+        # Sayısal sıralama için dene
+        l = [(float(tv.set(k, col_index)), k) for k in tv.get_children('')]
+    except ValueError:
+        # Sayısal değilse alfabetik sıralama
+        l = [(tv.set(k, col_index), k) for k in tv.get_children('')]
+    l.sort(reverse=reverse)
+
+    # Sıralanan verileri yeniden yerleştir
+    for index, (val, k) in enumerate(l):
+        tv.move(k, '', index)
+
+# Gizleme/gösterme fonksiyonu (güncellendi)
+def toggle_column(col):
+    global hidden_data
+    column_visibility[col] = not column_visibility[col]
+
+    # İndeks eşlemesini güncelle
+    if not column_visibility[col]:
+        # Gizlenen sütunun indeksini kaldır
+        del column_index_map[col]
+        # Kalan sütunların indekslerini güncelle
+        for i, c in enumerate(columns):
+            if column_visibility[c]:
+                column_index_map[c] = i 
+    else:
+        # Gösterilen sütunun indeksini ekle
+        visible_index = sum(1 for c in columns[:columns.index(col)] if column_visibility[c])
+        column_index_map[col] = visible_index
+        # Kalan sütunların indekslerini güncelle
+        for i, c in enumerate(columns[columns.index(col)+1:], visible_index+1):
+            if column_visibility[c]:
+                column_index_map[c] = i 
+
+    # Verileri yedekle veya geri yükle
+    if not column_visibility[col]:
+        # Verileri gizle ve sakla
+        hidden_data = [(tree.set(k, col), k) for k in tree.get_children('')]
+        for k in tree.get_children(''):
+            tree.delete(k)
+    else:
+        # Verileri geri yükle
+        for value, k in hidden_data:
+            # Görünür sütun indeksini kullanarak doğru konuma ekle
+            visible_index = column_index_map[col] 
+            new_values = list(tree.item(k)['values'])
+            new_values.insert(visible_index, value)
+            tree.item(k, values=new_values)
+        hidden_data = []
+
+    # Treeview'i yeniden oluştur
+    tree.destroy()
+    create_treeview(column_visibility)
+
+# Sağ tıklama menüsü fonksiyonu
+def create_sort_menu(event):
+    col = tree.identify_column(event.x)
+    column_index = int(col[1:]) - 1  # Sütun indeksi (0'dan başlar)
+    column_name = columns[column_index]
+
+    menu = tk.Menu(root, tearoff=0)
+    menu.add_command(label="Küçükten Büyüğe", command=lambda: sort_column(tree, column_name, False))
+    menu.add_command(label="Büyükten Küçüğe", command=lambda: sort_column(tree, column_name, True))
+    menu.add_separator()
+    menu.add_command(label="A'dan Z'ye", command=lambda: sort_column(tree, column_name, False))
+    menu.add_command(label="Z'den A'ya", command=lambda: sort_column(tree, column_name, True))
+    menu.add_separator()
+    menu.add_command(label="Gizle", command=lambda: toggle_column(column_name))
+
+    try:
+        menu.tk_popup(event.x_root, event.y_root)
+    finally:
+        menu.grab_release()
+
+# Menü çubuğu oluşturma
+menubar = tk.Menu(root)
+view_menu = tk.Menu(menubar, tearoff=0)
+
+def update_view_menu(column):
+    column_visibility[column] = not column_visibility[column]
+    view_menu.entryconfig(
+        column, label=column + (" (Gizli)" if not column_visibility[column] else "")
+    )
+    toggle_column(column)
+
+# Sütunlar için menü öğeleri ekleme
+for column in columns:
+    view_menu.add_command(
+        label=column,  command=lambda col=column: toggle_column(col)  # Default value for col
+    )
+    view_menu.entryconfig(
+        column, label=column + (" (Gizli)" if not column_visibility[column] else "")
+    )
+    
+
+menubar.add_cascade(label="Görünüm", menu=view_menu)
+root.config(menu=menubar)
+
+
+
+# Başlangıçta Treeview'i oluştur
+create_treeview(column_visibility)
+
+# Sütun başlıklarına sağ tıklama menüsü bağla
+tree.bind("<Button-3>", create_sort_menu)
+
+root.mainloop()
